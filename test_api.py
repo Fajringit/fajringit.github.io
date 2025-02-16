@@ -5,16 +5,11 @@ BASE_URL = "http://127.0.0.1:5000/users"
 
 # 1. POST - Create User
 def test_create_user():
-    data = {
-        "name": "Fajrin",
-        "email": "fajrin@example.com"
-    }
+    data = {"name": "testuser", "email": "test@example.com"}  # ✅ Sesuai API
     response = requests.post(BASE_URL, json=data)
+    assert response.status_code == 201, f"Expected 201, got {response.status_code}"
+    print("Test Create User: Passed")
 
-    print("Status Code:", response.status_code)
-    print("Response Body:", response.text)  # Lihat detail error API
-
-    assert response.status_code == 201
 
 
 # 2. GET - Get All Users
@@ -31,7 +26,7 @@ def test_get_user_by_id(user_id):
 
 # 4. PUT - Update User
 def test_update_user(user_id):
-    data = {"name": "Fajrin Updated", "email": "fajrin.updated@example.com"}
+    data = {"name": "Fajrin", "email": "fajrin.updated@example.com"}
     response = requests.put(f"{BASE_URL}/{user_id}", json=data)
     assert response.status_code == 200
     print(f"User {user_id} updated:", response.json())
@@ -45,9 +40,9 @@ def test_delete_user(user_id):
 if __name__ == "__main__":
     test_create_user()  # Test Create User
     test_get_users()    # Test Get All Users
-    test_get_user_by_id(2)  # Test Get User by ID (assumes ID 1 exists)
-    test_update_user(2)  # Test Update User (assumes ID 1 exists)
-    test_delete_user(2)  # Test Delete User (assumes ID 1 exists)
+    test_get_user_by_id(1)  # Test Get User by ID (assumes ID 1 exists)
+    test_update_user(1)  # Test Update User (assumes ID 1 exists)
+    test_delete_user(1)  # Test Delete User (assumes ID 1 exists)
 
 # Tunggu server Flask siap
 for i in range(15):
