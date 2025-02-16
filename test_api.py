@@ -10,16 +10,15 @@ def test_health_check():
 
 # 1. POST - Create User
 def test_create_user():
-    data = {"name": "Fajrin", "email": "fajrin@example.com"}
-    response = requests.post(BASE_URL, json=data)
-    assert response.status_code == 201, f"Expected 201, got {response.status_code}"
-    print("Test Create User: Passed")
+    payload = {"name": "John", "email": "john@example.com"}
+    headers = {"Content-Type": "application/json"}
+    response = requests.post(BASE_URL, json=payload, headers=headers)
+    assert response.status_code == 201, f"Create User Failed: {response.status_code}"
 
 # 2. GET - Get All Users
 def test_get_users():
     response = requests.get(BASE_URL)
     assert response.status_code == 200, "Expected 200"
-    print("All Users:", response.json())
 
 # 3. GET - Get User by ID
 def test_get_user_by_id():

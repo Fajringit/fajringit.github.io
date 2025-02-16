@@ -12,7 +12,12 @@ logging.basicConfig(level=logging.DEBUG)
 
 @app.before_request
 def log_request_info():
-    logging.info(f"Request: {request.method} {request.url} - Data: {request.get_json()}")
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        logging.info(f"Request: {request.method} {request.url} - Data: {request.get_json()}")
+    else:
+        logging.info(f"Request: {request.method} {request.url} - Content-Type: {content_type}")
+
 
 @app.errorhandler(Exception)
 def handle_exception(e):
