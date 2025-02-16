@@ -22,6 +22,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
+          --name postgres
           --health-cmd "pg_isready -U fajrin -d testdb"
           --health-interval 5s
           --health-timeout 5s
@@ -50,13 +51,12 @@ jobs:
       - name: Setup Database
         run: |
           echo "📂 Creating users table..."
-          PGPASSWORD=password123 psql -h postgres -U fajrin -d testdb -c "
+          PGPASSWORD=password123 psql -h 127.0.0.1 -U fajrin -d testdb -c "
           CREATE TABLE IF NOT EXISTS users (
               id SERIAL PRIMARY KEY,
               name VARCHAR(100),
               email VARCHAR(100) UNIQUE
           );"
-          echo "✅ Table created!"
 
       - name: Wait for Flask Server
         run: |
