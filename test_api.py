@@ -1,4 +1,5 @@
 import requests
+import time
 
 BASE_URL = "http://127.0.0.1:5000/users"
 
@@ -47,3 +48,22 @@ if __name__ == "__main__":
     test_get_user_by_id(2)  # Test Get User by ID (assumes ID 1 exists)
     test_update_user(2)  # Test Update User (assumes ID 1 exists)
     test_delete_user(2)  # Test Delete User (assumes ID 1 exists)
+
+# Tunggu server Flask siap
+for i in range(15):
+    try:
+        response = requests.get(BASE_URL)
+        if response.status_code == 200:
+            print("Server Flask siap.")
+            break
+    except requests.ConnectionError:
+        print(f"Server belum siap... ({i+1}/15)")
+    time.sleep(2)
+
+def test_create_user():
+    data = {"username": "testuser", "email": "test@example.com"}
+    response = requests.post(BASE_URL, json=data)
+    assert response.status_code == 201, f"Expected 201, got {response.status_code}"
+    print("Test Create User: Passed")
+
+test_create_user()

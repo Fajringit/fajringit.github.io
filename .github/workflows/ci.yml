@@ -1,0 +1,32 @@
+name: Run API Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Start Flask Server (Background)
+        run: |
+          python app.py &  # Run Flask di background
+          sleep 5         # Tunggu server siap
+
+      - name: Run Tests
+        run: |
+          python test_api.py
