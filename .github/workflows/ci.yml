@@ -1,50 +1,32 @@
-name: CI for Flask API
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-
 jobs:
   test:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_DB: test_db
-          POSTGRES_USER: fajrin
-          POSTGRES_PASSWORD: fajrinpassword
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U fajrin"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
+    runs-on: ubuntu-latest # Sesuaikan jika pakai Windows
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
-      - name: Install Dependencies
+      - name: Install Dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
-          pip install -r requirements.txt
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client libpq-dev gcc python3-dev
 
-      - name: Start Flask App
+      - name: Install Dependencies (Windows)
+        if: runner.os == 'Windows'
         run: |
-          export FLASK_APP=app.py
-          flask run --host=0.0.0.0 --port=5000 &
-        env:
-          DATABASE_URL: postgresql://fajrin:fajrinpassword@localhost:5432/test_db
+          choco install visualstudio2022buildtools -y --no-progress
+          choco install visualstudio2022-workload-vctools -y --no-progress
+
+      - name: Install Python packages
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run Tests
         run: |
-          sleep 5  # Tunggu Flask siap
-          pytest --disable-warnings
+          pytest test_api.py
