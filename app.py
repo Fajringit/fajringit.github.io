@@ -5,6 +5,11 @@ from db_config import get_db_connection
 
 app = Flask(__name__)
 
+# Health Check
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "ok"}), 200
+
 @app.route('/users', methods=['POST'])
 def create_user():
     try:
