@@ -1,32 +1,50 @@
-name: Run API Tests
+name: CI for Flask API
 
 on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: fajrin
+          POSTGRES_PASSWORD: fajrinpassword
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fajrin"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.13
+          python-version: "3.13"
 
       - name: Install Dependencies
         run: |
           pip install -r requirements.txt
 
-      - name: Start Flask Server (Background)
+      - name: Start Flask App
         run: |
-          python app.py &  # Run Flask di background
-          sleep 5         # Tunggu server siap
+          export FLASK_APP=app.py
+          flask run --host=0.0.0.0 --port=5000 &
+        env:
+          DATABASE_URL: postgresql://fajrin:fajrinpassword@localhost:5432/test_db
 
       - name: Run Tests
         run: |
-          python test_api.py
+          sleep 5  # Tunggu Flask siap
+          pytest --disable-warnings
