@@ -91,6 +91,6 @@ def delete_user(user_id):
         return jsonify({"message": "User deleted"})
     return jsonify({"error": "User not found"}), 404
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("🚀 Starting Flask server on http://127.0.0.1:5000")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

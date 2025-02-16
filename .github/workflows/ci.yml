@@ -50,15 +50,17 @@ jobs:
       - name: Start Flask Server with Health Check
         run: |
           nohup python app.py &
-          for i in {1..20}; do
+          echo "Menunggu Flask server..."
+          for i in {1..30}; do
             if curl -s http://127.0.0.1:5000/health; then
-              echo "Flask server is ready"
+              echo "✅ Flask server is ready"
               break
             fi
-            echo "Waiting for Flask server to start... ($i/20)"
-            sleep 2
+            echo "⏳ Waiting for Flask server to start... ($i/50)"
+            sleep 3
           done
 
       - name: Run Tests
         run: |
+          sleep 5
           pytest test_api.py
