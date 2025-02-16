@@ -1,6 +1,16 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   test:
-    runs-on: ubuntu-latest # Sesuaikan jika pakai Windows
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -15,12 +25,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql-client libpq-dev gcc python3-dev
-
-      - name: Install Dependencies (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          choco install visualstudio2022buildtools -y --no-progress
-          choco install visualstudio2022-workload-vctools -y --no-progress
 
       - name: Install Python packages
         run: |
