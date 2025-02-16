@@ -26,8 +26,6 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
-        extra_hosts:
-          - "host.docker.internal:host-gateway"
 
     steps:
       - name: Checkout repository
