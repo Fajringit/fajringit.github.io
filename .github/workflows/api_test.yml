@@ -1,10 +1,7 @@
-name: API Integration Tests
+name: API Integration Test
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -19,18 +16,18 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.13"
+          python-version: "3.11" # Turunkan ke Python 3.11
 
       - name: Install Dependencies
-        run: pip install -r requirements.txt
-
-      - name: Make wait-for-it executable
-        run: chmod +x scripts/wait-for-it.sh
-
-      - name: Start Flask Server
         run: |
-          nohup python app.py &
-          scripts/wait-for-it.sh 127.0.0.1 5000 30
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run API Tests
-        run: python test_api.py
+      - name: Run API Server
+        run: |
+          nohup python app.py &  # Start Flask di background
+          sleep 5  # Tunggu server siap
+
+      - name: Run Tests
+        run: |
+          python test_api.py  # Jalankan test API
