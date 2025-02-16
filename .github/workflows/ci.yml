@@ -49,17 +49,31 @@ jobs:
 
       - name: Setup Database
         run: |
+          echo "📂 Creating users table..."
           PGPASSWORD=password123 psql -h postgres -U fajrin -d testdb -c "
           CREATE TABLE IF NOT EXISTS users (
               id SERIAL PRIMARY KEY,
               name VARCHAR(100),
               email VARCHAR(100) UNIQUE
           );"
+          echo "✅ Table created!"
 
       - name: Wait for Flask Server
         run: |
           echo "Waiting for Flask server to fully start..."
           sleep 10
+
+      - name: Wait for PostgreSQL
+        run: |
+          echo "⏳ Waiting for PostgreSQL to be ready..."
+          for i in {1..30}; do
+            if PGPASSWORD=password123 pg_isready -h postgres -U fajrin -d testdb; then
+              echo "✅ PostgreSQL is ready!"
+              break
+            fi
+            echo "⏳ Waiting ($i/30)..."
+            sleep 2
+          done
 
       - name: Install Python packages
         run: |
