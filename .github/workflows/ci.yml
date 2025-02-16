@@ -31,6 +31,10 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Install pytest
+        run: |
+          pip install pytest
+
       - name: Run Tests
         run: |
           pytest test_api.py
