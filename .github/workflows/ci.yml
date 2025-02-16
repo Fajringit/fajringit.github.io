@@ -11,6 +11,22 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test_user -d test_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -31,10 +47,17 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Start Flask Server
+      - name: Start Flask Server with Health Check
         run: |
-          python app.py &
-          sleep 10
+          nohup python app.py &
+          for i in {1..20}; do
+            if curl -s http://127.0.0.1:5000/health; then
+              echo "Flask server is ready"
+              break
+            fi
+            echo "Waiting for Flask server to start... ($i/20)"
+            sleep 2
+          done
 
       - name: Run Tests
         run: |
