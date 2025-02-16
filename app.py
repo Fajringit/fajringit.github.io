@@ -1,24 +1,38 @@
 # app.py
 from flask import Flask, request, jsonify
-from db_config import get_db_connection
+import traceback
 
 app = Flask(__name__)
 
-# Create User
 @app.route('/users', methods=['POST'])
 def create_user():
-    data = request.json
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO users (name, email) VALUES (%s, %s) RETURNING id;",
-        (data['name'], data['email'])
-    )
-    user_id = cur.fetchone()[0]
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"id": user_id, "message": "User created"}), 201
+    try:
+        data = request.json
+        if not data.get('name') or not data.get('email'):
+            return jsonify({"error": "Name and email required"}), 400
+        
+        # Contoh log input
+        print(f"Received data: {data}")
+
+        # Simulasi insert ke database
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO users (name, email) VALUES (%s, %s) RETURNING id;",
+            (data['name'], data['email'])
+        )
+        new_user_id = cursor.fetchone()[0]
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({"id": new_user_id, "name": data['name'], "email": data['email']}), 201
+    
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        traceback.print_exc()  # Lihat error lengkap di log
+        return jsonify({"error": "Internal Server Error"}), 500
+
 
 # Get All Users
 @app.route('/users', methods=['GET'])

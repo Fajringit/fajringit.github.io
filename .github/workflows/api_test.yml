@@ -1,33 +1,49 @@
 name: API Integration Test
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_DB: testdb
+          POSTGRES_USER: fajrin
+          POSTGRES_PASSWORD: password123
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fajrin -d testdb"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11" # Turunkan ke Python 3.11
+          python-version: "3.13"
 
       - name: Install Dependencies
         run: |
-          pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run API Server
+      - name: Create Table Users
         run: |
-          nohup python app.py &  # Start Flask di background
-          sleep 5  # Tunggu server siap
+          PGPASSWORD=password123 psql -h localhost -U fajrin -d testdb -c "
+          CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100),
+            email VARCHAR(100) UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );"
 
       - name: Run Tests
         run: |
-          python test_api.py  # Jalankan test API
+          python test_api.py
