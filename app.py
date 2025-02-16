@@ -1,6 +1,7 @@
 # app.py
 from flask import Flask, request, jsonify
 import traceback
+from db_config import get_db_connection
 
 app = Flask(__name__)
 
@@ -91,4 +92,5 @@ def delete_user(user_id):
     return jsonify({"error": "User not found"}), 404
 
 if __name__ == '__main__':
+    print("🚀 Starting Flask server on http://127.0.0.1:5000")
     app.run(host='0.0.0.0', port=5000, debug=True)

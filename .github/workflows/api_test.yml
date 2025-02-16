@@ -47,3 +47,12 @@ jobs:
       - name: Run Tests
         run: |
           python test_api.py
+
+      - name: Start Flask App
+        run: |
+          nohup python app.py &  # Jalankan Flask di background
+          sleep 5  # Tunggu 5 detik agar server siap
+
+      - name: Run Tests
+        run: |
+          python test_api.py
