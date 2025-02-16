@@ -1,23 +1,17 @@
-# db_config.py
-# import psycopg2
-
-# def get_db_connection():
-#     conn = psycopg2.connect(
-#     host="localhost",
-#     database="api_suite",
-#     user="postgres",
-#     password="admin"
-# )
-
-#     return conn
-
 import psycopg2
+import time
 
-def get_db_connection():
-    conn = psycopg2.connect(
-        host="localhost",
-        database="testdb",
-        user="fajrin",
-        password="password123"
-    )
-    return conn
+def get_db_connection(retries=5, delay=3):
+    for attempt in range(retries):
+        try:
+            conn = psycopg2.connect(
+                host="host.docker.internal",
+                database="testdb",
+                user="fajrin",
+                password="password123"
+            )
+            return conn
+        except Exception as e:
+            print(f"Database connection failed (Attempt {attempt+1}): {e}")
+            time.sleep(delay)
+    raise Exception("Database connection failed after multiple attempts")

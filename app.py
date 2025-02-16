@@ -8,6 +8,7 @@ app = Flask(__name__)
 
 # Tambahkan logging
 logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 @app.before_request
 def log_request_info():
@@ -16,7 +17,9 @@ def log_request_info():
 @app.errorhandler(Exception)
 def handle_exception(e):
     logging.error(f"Error: {e}")
+    traceback.print_exc()
     return jsonify({"error": str(e)}), 500
+
 
 # Health Check
 @app.route('/health', methods=['GET'])
