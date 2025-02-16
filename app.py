@@ -2,8 +2,21 @@
 from flask import Flask, request, jsonify
 import traceback
 from db_config import get_db_connection
+import logging
 
 app = Flask(__name__)
+
+# Tambahkan logging
+logging.basicConfig(level=logging.INFO)
+
+@app.before_request
+def log_request_info():
+    logging.info(f"Request: {request.method} {request.url} - Data: {request.get_json()}")
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logging.error(f"Error: {e}")
+    return jsonify({"error": str(e)}), 500
 
 # Health Check
 @app.route('/health', methods=['GET'])

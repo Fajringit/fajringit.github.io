@@ -47,6 +47,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y postgresql-client libpq-dev gcc python3-dev
 
+      - name: Setup Database
+        run: |
+          PGPASSWORD=password psql -h localhost -U test_user -d test_password -c "
+          CREATE TABLE IF NOT EXISTS users (
+              id SERIAL PRIMARY KEY,
+              name VARCHAR(100),
+              email VARCHAR(100) UNIQUE
+          );"
+
       - name: Install Python packages
         run: |
           pip install --upgrade pip

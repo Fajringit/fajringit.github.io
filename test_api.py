@@ -3,6 +3,12 @@ import time
 
 BASE_URL = "http://127.0.0.1:5000/users"
 
+# 0. Health Check (Sebelum Tes Utama)
+def test_health_check():
+    response = requests.get("http://127.0.0.1:5000/")
+    assert response.status_code == 200, f"API Health Check Failed: {response.status_code}"
+    print("API Health Check: Passed")
+
 # 1. POST - Create User
 def test_create_user():
     data = {"name": "Fajrin", "email": "fajrin@example.com"}
