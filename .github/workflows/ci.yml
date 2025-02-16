@@ -51,7 +51,7 @@ jobs:
 
       - name: Setup Database
         run: |
-          PGPASSWORD=password123 psql -h host.docker.internal -U fajrin -d testdb -c "
+          PGPASSWORD=password123 psql -h postgres -U fajrin -d testdb -c "
           CREATE TABLE IF NOT EXISTS users (
               id SERIAL PRIMARY KEY,
               name VARCHAR(100),

@@ -5,7 +5,7 @@ def get_db_connection(retries=5, delay=3):
     for attempt in range(retries):
         try:
             conn = psycopg2.connect(
-                host="host.docker.internal",
+                host="postgres",
                 database="testdb",
                 user="fajrin",
                 password="password123"
