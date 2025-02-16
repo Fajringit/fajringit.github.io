@@ -31,9 +31,10 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install pytest
+      - name: Start Flask Server
         run: |
-          pip install pytest
+          python app.py &
+          sleep 10
 
       - name: Run Tests
         run: |
