@@ -49,7 +49,7 @@ jobs:
 
       - name: Setup Database
         run: |
-          PGPASSWORD=password psql -h localhost -U fajrin -d testdb -c "
+          PGPASSWORD=password123 psql -h localhost -U fajrin -d testdb -c "
           CREATE TABLE IF NOT EXISTS users (
               id SERIAL PRIMARY KEY,
               name VARCHAR(100),
